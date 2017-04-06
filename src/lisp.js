@@ -1,17 +1,22 @@
 const CACHE = require('./cache')
 
-module.exports = function lisp(list){
+function assertArgs(list) {
   if ('object' !== typeof list && 'function' !== typeof list.map) {
     throw new Error(`Argument must be an array, received: ${list}`)
   }
+}
 
-  const [fn, ...args] = list
-
-  if ('function' === typeof fn) return fn.apply(this, args)
+function resolveFn(fn) {
+  if ('function' === typeof fn) return fn
 
   if (!CACHE[fn]) {
     throw new Error(`function not defined: "${fn}"`)
   }
 
-  return CACHE[fn].apply(this, args)
+  return CACHE[fn]
+}
+
+module.exports = function lisp([fn, ...args]){
+  assertArgs(arguments[0])
+  return resolveFn(fn).apply(this, args)
 }
