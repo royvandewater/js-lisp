@@ -1,12 +1,11 @@
+const { runTests } = require('./test-helpers')
 const { lisp, l } = require('../index')
-
-
 
 function jsonStringifySpec() {
   const output = lisp([JSON.stringify, {foo: 'bar'}])
 
   if (output !== '{"foo":"bar"}') {
-    throw new Error(`Expected ${output} to equal '{"foo":"bar"}'`)
+    throw new Error(`Expected '${output}' to equal '{"foo":"bar"}'`)
   }
 }
 
@@ -14,7 +13,7 @@ function jsonStringifyShortSpec() {
   const output = l([JSON.stringify, {foo: 'bar'}])
 
   if (output !== '{"foo":"bar"}') {
-    throw new Error(`Expected ${output} to equal '{"foo":"bar"}'`)
+    throw new Error(`Expected '${output}' to equal '{"foo":"bar"}'`)
   }
 }
 
@@ -25,42 +24,31 @@ function asyncSpec(callback) {
   }
 
   l([asyncFn, 5, (actual) => {
-    if (actual !== 5) return callback(new Error(`Expect ${actual} to equal 5`))
+    if (actual !== 5) return callback(new Error(`Expected '${actual}' to equal 5`))
     callback()
   }])
 }
 
-function runTest(fn, callback) {
-  if(fn.length == 1) {
-    return fn(callback)
-  }
-
+function calledWithNonArraySpec() {
   try {
-    fn()
+    l('hi')
   } catch (error) {
-    return callback(error)
+    if (error.message !== `Argument must be an array, received: hi`) {
+      throw new Error(`Expected '${error.message}' to equal 'Argument must be an array, received: hi'`)
+    }
+    return
   }
 
-  callback()
+  throw new Error(`Expected function to throw 'Argument must be an array'. It did not throw.`)
 }
 
-function runTests(tests, callback) {
-  if (tests.length == 0) return callback()
-
-  const [test, ...rest] = tests
-
-  runTest(test, (error) => {
-    if (error) return callback(error)
-
-    return runTests(rest, callback)
-  })
-}
 
 module.exports = function(callback) {
   const tests = [
     jsonStringifySpec,
     jsonStringifyShortSpec,
     asyncSpec,
+    calledWithNonArraySpec,
   ]
   runTests(tests, callback)
 }
