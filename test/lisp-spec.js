@@ -1,5 +1,7 @@
 const { lisp, l } = require('../index')
 
+
+
 function jsonStringifySpec() {
   const output = lisp([JSON.stringify, {foo: 'bar'}])
 
@@ -28,13 +30,37 @@ function asyncSpec(callback) {
   }])
 }
 
-module.exports = function(callback) {
+function runTest(fn, callback) {
+  if(fn.length == 1) {
+    return fn(callback)
+  }
+
   try {
-    jsonStringifySpec()
-    jsonStringifyShortSpec()
+    fn()
   } catch (error) {
     return callback(error)
   }
 
-  asyncSpec(callback)
+  callback()
+}
+
+function runTests(tests, callback) {
+  if (tests.length == 0) return callback()
+
+  const [test, ...rest] = tests
+
+  runTest(test, (error) => {
+    if (error) return callback(error)
+
+    return runTests(rest, callback)
+  })
+}
+
+module.exports = function(callback) {
+  const tests = [
+    jsonStringifySpec,
+    jsonStringifyShortSpec,
+    asyncSpec,
+  ]
+  runTests(tests, callback)
 }
