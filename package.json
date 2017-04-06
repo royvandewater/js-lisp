@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "How close can JS get to lisp?",
   "main": "index.js",
+  "scripts": {
+    "test": "node test/index.js"
+  },
   "repository": "https://github.com/royvandewater/js-lisp.git",
   "author": "Roy van de Water",
   "license": "MIT"
