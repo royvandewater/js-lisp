@@ -1,3 +1,18 @@
+function assertEqual(actual, expected, callback) {
+  if ('function' === typeof callback) return assertEqualAsync(actual, expected, callback)
+  return assertEqualSync(actual, expected)
+}
+
+function assertEqualAsync(actual, expected, callback) {
+  if (actual === expected) return callback()
+  return callback(new Error(`Expected '${actual}' to equal '${expected}'`))
+}
+
+function assertEqualSync(actual, expected) {
+  if (actual === expected) return
+  throw new Error(`Expected '${actual}' to equal '${expected}'`)
+}
+
 function runTest(fn, callback) {
   if(fn.length == 1) {
     return fn(callback)
@@ -24,4 +39,4 @@ function runTests(tests, callback) {
   })
 }
 
-module.exports = { runTests }
+module.exports = { assertEqual, runTests }
