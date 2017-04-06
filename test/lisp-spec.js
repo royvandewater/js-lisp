@@ -17,6 +17,22 @@ function jsonStringifyShortSpec() {
   }
 }
 
+function encodeURIComponentSpec() {
+  const output = l([encodeURIComponent, ' '])
+
+  if (output !== '%20') {
+    throw new Error(`Expected '${output}' to equal '%20'`)
+  }
+}
+
+function encodeURIComponentUsingStringSpec() {
+  const output = l(['encodeURIComponent', ' '])
+
+  if (output !== '%20') {
+    throw new Error(`Expected '${output}' to equal '%20'`)
+  }
+}
+
 function asyncSpec(callback) {
   const asyncFn = (arg, _callback) => {
     const respond = () => _callback(arg)
@@ -47,6 +63,8 @@ module.exports = function(callback) {
   const tests = [
     jsonStringifySpec,
     jsonStringifyShortSpec,
+    encodeURIComponentSpec,
+    encodeURIComponentUsingStringSpec,
     asyncSpec,
     calledWithNonArraySpec,
   ]

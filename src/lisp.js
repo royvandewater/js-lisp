@@ -9,11 +9,15 @@ function assertArgs(list) {
 function resolveFn(fn) {
   if ('function' === typeof fn) return fn
 
-  if (!CACHE[fn]) {
-    throw new Error(`function not defined: "${fn}"`)
+  if (CACHE[fn]) {
+    return CACHE[fn]
   }
 
-  return CACHE[fn]
+  if (global[fn]) {
+    return global[fn]
+  }
+
+  throw new Error(`function not defined: "${fn}"`)
 }
 
 module.exports = function lisp([fn, ...args]){
